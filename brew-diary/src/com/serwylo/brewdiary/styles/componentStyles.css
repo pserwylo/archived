@@ -1,0 +1,17 @@
+@namespace ivt "com.ivt.flex.controls.*";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+mx|Form
+{
+    paddingTop: 5;
+}
+
+mx|FormItem
+{
+    labelStyleName: "formItemLabel";
+}
+
+ivt|DateTimeChooser
+{
+    skinClass: ClassReference( "com.ivt.flex.skins.DateTimeChooserSkin" );
+}

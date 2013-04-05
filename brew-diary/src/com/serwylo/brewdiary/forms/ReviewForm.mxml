@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<s:TitleWindow
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:ivt="com.ivt.flex.controls.*"
+	close="this.close()"
+	title="New Review">
+
+	<fx:Script>
+		<![CDATA[
+		import com.serwylo.brewdiary.data.Brew;
+
+		import com.serwylo.brewdiary.data.Note;
+
+		import com.serwylo.brewdiary.data.Review;
+
+		import mx.core.FlexGlobals;
+		import mx.managers.PopUpManager;
+
+		public static function show( modal:Boolean = true ):ReviewForm
+		{
+			var form:ReviewForm = new ReviewForm();
+			PopUpManager.addPopUp( form, DisplayObject( FlexGlobals.topLevelApplication ), modal );
+			PopUpManager.centerPopUp( form );
+			return form;
+		}
+
+		public function close():void
+		{
+			PopUpManager.removePopUp( this );
+		}
+
+		public function get shortReviewValue():String
+		{
+			return inputShortReview.text;
+		}
+
+		public function get longReviewValue():String
+		{
+			return inputLongReview.text;
+		}
+
+		public function get ratingValue():Number
+		{
+			return inputRating.value;
+		}
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:VerticalLayout
+			paddingTop="10"
+			paddingBottom="10"
+			paddingLeft="10"
+			paddingRight="10"/>
+	</s:layout>
+
+	<s:Label width="100%">
+		<s:text>Have you tasted it yet?
+If so, you may want to provide a review here so that you can tell whether it was any good or not.</s:text>
+	</s:Label>
+
+	<mx:Form
+		width="100%"
+		height="100%">
+		<mx:FormItem
+			label="Quick Review"
+			width="100%">
+			<s:TextInput
+				id="inputShortReview"
+				width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Detailed Review"
+			width="100%">
+			<s:TextArea
+				id="inputLongReview"
+				width="500"
+				height="300"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Rating"
+			width="100%"
+			direction="vertical">
+			<s:HGroup
+				width="100%">
+				<mx:Image source="{inputRating.value &lt;= 3 ? Review.IMG_BAD : ( inputRating.value &lt;= 6 ? Review.IMG_OK : Review.IMG_GOOD )}" />
+				<s:VGroup width="100%">
+					<s:HSlider
+						id="inputRating"
+						width="100%"
+						minimum="0"
+						maximum="10"
+						stepSize="0.5"
+						value="5"/>
+					<s:HGroup
+						width="100%">
+						<s:Label text="Shit" />
+						<mx:Spacer width="100%" />
+						<s:Label text="Great" />
+					</s:HGroup>
+				</s:VGroup>
+			</s:HGroup>
+		</mx:FormItem>
+	</mx:Form>
+
+	<s:controlBarContent>
+		<s:HGroup width="100%">
+			<s:Button
+				label="Cancel"
+				width="100"
+				click="this.dispatchEvent( new Event( Event.CLOSE ) );" />
+			<mx:Spacer width="100%" />
+			<s:Button
+				label="Ok"
+				width="100"
+				click="this.dispatchEvent( new Event( Event.SELECT ) ); this.close()"
+				enabled="{this.inputShortReview.text.length > 0}" />
+		</s:HGroup>
+	</s:controlBarContent>
+
+</s:TitleWindow>

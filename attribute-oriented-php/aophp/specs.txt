@@ -1,0 +1,40 @@
+
+
+
+class TestClass
+{
+
+	/**
+	 * @sb.log info
+	 * @sb.access 3
+	 */
+	public function saveDeelio()
+	{
+		
+	}
+
+}
+
+class Authenticator
+{
+	public function authenticateFunction( $function, $attributes )
+	{
+		$access = $attributes['@sb.access'];
+	}
+}
+
+class Logger
+{
+
+	public function log( $function, $attributes )
+	{
+		$level = $attributes['@sb.log'];
+		$this->$level( $function );
+	}
+
+	public function info( $message )
+	{
+		
+	}
+
+}

@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<s:TitleWindow
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:ivt="com.ivt.flex.controls.*"
+	title="New Batch"
+	close="this.close()">
+
+	<fx:Script>
+		<![CDATA[
+		import com.serwylo.brewdiary.data.Status;
+
+		import mx.collections.ArrayCollection;
+		import mx.core.FlexGlobals;
+		import mx.managers.PopUpManager;
+
+		[Bindable]
+		private var _statusList:ArrayCollection;
+
+		private function setup( statusList:ArrayCollection ):void
+		{
+			this._statusList = statusList;
+		}
+
+		public static function show( statusList:ArrayCollection, modal:Boolean = true ):NewBrewForm
+		{
+			var form:NewBrewForm = new NewBrewForm();
+			form.setup( statusList );
+			PopUpManager.addPopUp( form, DisplayObject( FlexGlobals.topLevelApplication ), modal );
+			PopUpManager.centerPopUp( form );
+			return form;
+		}
+
+		public function close():void
+		{
+			PopUpManager.removePopUp( this );
+		}
+
+		public function get typeValue():String
+		{
+			return inputType.text;
+		}
+
+		public function get startDateValue():Date
+		{
+			return inputStartDate.selectedDate;
+		}
+
+		public function get statusValue():Status
+		{
+			return inputStatus.selectedItem as Status;
+		}
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:VerticalLayout
+			paddingTop="10"
+			paddingBottom="10"
+			paddingLeft="10"
+			paddingRight="10"/>
+	</s:layout>
+
+	<mx:Form
+		width="100%"
+		height="100%">
+		<mx:FormItem
+			label="Type"
+			width="100%"
+			required="true">
+			<s:TextInput
+				id="inputType"
+				width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Start Date"
+			width="100%"
+			required="true">
+			<ivt:DateTimeChooser
+				id="inputStartDate"
+				width="100%"
+				selectedDate="{new Date()}"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Status"
+			width="100%"
+			required="true">
+			<s:DropDownList
+				id="inputStatus"
+				width="100%"
+				dataProvider="{this._statusList}"
+				labelField="statusLabel"
+				requireSelection="true"/>
+		</mx:FormItem>
+	</mx:Form>
+
+	<s:controlBarContent>
+		<s:HGroup width="100%">
+			<s:Button
+				label="Cancel"
+				width="100"
+				click="this.dispatchEvent( new Event( Event.CLOSE ) );"/>
+			<mx:Spacer width="100%"/>
+			<s:Button
+				label="Ok"
+				width="100"
+				click="this.dispatchEvent( new Event( Event.SELECT ) ); this.close()"
+				enabled="{this.inputType.text.length != 0 &amp;&amp; this.inputStartDate.selectedDate != null}"/>
+		</s:HGroup>
+	</s:controlBarContent>
+
+</s:TitleWindow>

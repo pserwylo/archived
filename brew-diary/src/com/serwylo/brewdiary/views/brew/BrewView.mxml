@@ -1,0 +1,375 @@
+<?xml version="1.0"?>
+<core:View
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:core="com.serwylo.brewdiary.core.*" xmlns:chartclasses="mx.charts.chartClasses.*"
+	skinClass="com.serwylo.brewdiary.skins.FloatingFormSkin">
+
+	<fx:Script>
+		<![CDATA[
+		import com.ivt.flex.utils.HelperDate;
+		import com.serwylo.brewdiary.data.Brew;
+		import com.serwylo.brewdiary.data.Brew;
+		import com.serwylo.brewdiary.data.Note;
+
+		import com.serwylo.brewdiary.data.SgReading;
+		import com.serwylo.brewdiary.events.DataChangeEvent;
+
+		import mx.formatters.NumberFormatter;
+
+		[Bindable]
+		private var _model:BrewModel;
+
+		public static const EDIT_BOTTLES:String = "editBottles";
+
+		public static const ADD_NOTE:String = "addNote";
+		public static const DELETE_NOTE:String = "deleteNote";
+
+		public static const ADD_SG_READING:String = "addSgReading";
+		public static const DELETE_SG_READING:String = "deleteSgReading";
+
+		public static const ADD_REVIEW:String = "addReview";
+		public static const DELETE_REVIEW:String = "deleteReview";
+
+		public function setup( model:BrewModel ):void
+		{
+			this._model = model;
+		}
+
+		private function filterNoteList():void
+		{
+			// this._model.brew.notes.filterFunction = this.filterNote;
+			this._model.brew.notes.refresh();
+		}
+
+		function get selectedReading():SgReading
+		{
+			return this.listSgReadings.selectedItem as SgReading;
+		}
+
+		]]>
+	</fx:Script>
+
+	<s:Label
+		text="{this._model.brew.brewLabel}"
+		styleName="formHeading" />
+
+	<s:Label
+		text="Started on {HelperDate.formatDate( this._model.brew.startDate )}"
+		styleName="formSubHeading" />
+
+	<mx:Form
+		width="100%">
+		<mx:FormItem
+			label="Status"
+			width="100%"
+			direction="horizontal">
+			<s:DropDownList
+				id="inputStatus"
+				requireSelection="true"
+				width="100%"
+				labelField="statusLabel"
+				dataProvider="{this._model.statusList}"
+				selectedItem="{this._model.brew.status}"
+				change="this.dispatchEvent( new DataChangeEvent( 'status', this.inputStatus.selectedItem ) )"/>
+		</mx:FormItem>
+	</mx:Form>
+
+	<mx:TabBar
+		dataProvider="{this.views}" />
+
+	<mx:ViewStack
+		id="views"
+		width="100%"
+		height="100%">
+		<s:NavigatorContent
+			label="Notes"
+			width="100%"
+			height="100%">
+			<s:layout><s:VerticalLayout /></s:layout>
+			<s:List
+				id="listNotes"
+				width="100%"
+				height="100%"
+				dataProvider="{this._model.brew.notes}">
+				<s:itemRenderer>
+					<fx:Component>
+						<s:ItemRenderer width="100%">
+							<fx:Script>
+								<![CDATA[
+								import com.ivt.flex.utils.HelperDate;
+								import com.serwylo.brewdiary.data.Note;
+
+								[Bindable]
+								private var imgSource:Class;
+
+								public override function set data( value:Object ):void
+								{
+									super.data = value;
+									if ( value != null && value is Note )
+									{
+										this.imgSource = value.getIcon();
+									}
+									else
+									{
+										this.imgSource = null;
+									}
+								}
+
+								]]>
+							</fx:Script>
+							<s:layout>
+								<s:VerticalLayout
+									paddingTop="5"
+									paddingBottom="5"
+									paddingLeft="5"
+									paddingRight="5"/>
+							</s:layout>
+
+							<s:HGroup
+								width="100%"
+								verticalAlign="middle">
+								<mx:Image source="{this.imgSource}" />
+								<s:VGroup
+									width="100%">
+									<s:Label
+										width="100%"
+										text="{this.data.message} - {HelperDate.formatDateTime( this.data.createdDate )}" />
+								</s:VGroup>
+							</s:HGroup>
+						</s:ItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+			</s:List>
+			<s:HGroup
+				width="100%"
+				verticalAlign="middle">
+				<s:Button
+					id="btnNoteAdd"
+					label="Add"
+					click="this.dispatchEvent( new Event( ADD_NOTE ) )"/>
+				<s:Button
+					id="btnNoteDelete"
+					label="Delete"
+					click="this.dispatchEvent( new Event( DELETE_NOTE ) )"/>
+				<mx:Spacer width="100%" />
+				<s:Label text="Show	: " />
+				<!--<s:DropDownList
+					id="inputNoteFilter"
+					requireSelection="true"
+					dataProvider="{Note.TYPE_LIST_ALL}"
+					change="this.filterNoteList()"/>-->
+			</s:HGroup>
+		</s:NavigatorContent>
+
+		<s:NavigatorContent
+			label="Reviews"
+			width="100%"
+			height="100%"
+			enabled="{this._model.brew.status.canReview}">
+			<s:layout><s:VerticalLayout /></s:layout>
+			<s:List
+				id="listReviews"
+				width="100%"
+				height="100%"
+				dataProvider="{this._model.brew.reviews}">
+				<s:itemRenderer>
+					<fx:Component>
+						<s:ItemRenderer width="100%">
+							<fx:Script>
+								<![CDATA[
+								import com.ivt.flex.utils.HelperDate;
+								import com.serwylo.brewdiary.data.Review;
+
+								[Bindable]
+								private var imgSource:Class;
+
+								public override function set data( value:Object ):void
+								{
+									super.data = value;
+									if ( value != null && value is Review )
+									{
+										this.imgSource = value.getIcon();
+									}
+									else
+									{
+										this.imgSource = null;
+									}
+								}
+
+								]]>
+							</fx:Script>
+							<s:layout>
+								<s:VerticalLayout
+									paddingTop="5"
+									paddingBottom="5"
+									paddingLeft="5"
+									paddingRight="5"/>
+							</s:layout>
+
+							<s:HGroup
+								width="100%"
+								verticalAlign="middle">
+								<mx:Image source="{this.imgSource}" />
+								<s:VGroup
+									width="100%">
+									<s:Label
+										width="100%"
+										text="{this.data.shortDescription}" />
+									<s:Label
+										width="100%"
+										text="{this.data.rating} out of 10 - {HelperDate.formatDateTime( this.data.createdDate )}" />
+								</s:VGroup>
+							</s:HGroup>
+						</s:ItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+			</s:List>
+			<s:HGroup
+				width="100%"
+				verticalAlign="middle">
+				<s:Button
+					id="btnReviewAdd"
+					label="Add"
+					click="this.dispatchEvent( new Event( ADD_REVIEW ) )"/>
+				<s:Button
+					id="btnReviewDelete"
+					label="Delete"
+					click="this.dispatchEvent( new Event( DELETE_REVIEW ) )"/>
+			</s:HGroup>
+		</s:NavigatorContent>
+
+		<s:NavigatorContent
+			label="SG Readings"
+			width="100%">
+			<s:layout><s:VerticalLayout /></s:layout>
+			<mx:LineChart
+				height="200"
+				width="100%"
+				seriesFilters="{[]}">
+				<mx:series>
+					<mx:LineSeries
+						dataProvider="{this._model.brew.sgReadings}"
+						yField="sgValue"
+						xField="readingDate">
+						<mx:lineStroke>
+							<mx:Stroke
+								color="black"
+								weight="2" />
+						</mx:lineStroke>
+					</mx:LineSeries>
+					<mx:LineSeries
+						dataProvider="{this._model.brew.sgReadings}"
+						yField="targetRange"
+						xField="readingDate">
+						<mx:lineStroke>
+							<mx:Stroke
+								color="black"
+								weight="2" />
+						</mx:lineStroke>
+					</mx:LineSeries>
+				</mx:series>
+				<mx:horizontalAxis>
+					<mx:DateTimeAxis />
+				</mx:horizontalAxis>
+				<mx:verticalAxis>
+					<mx:LinearAxis
+						minimum="1.0"
+						minorInterval="0.010"/>
+				</mx:verticalAxis>
+				
+			</mx:LineChart>
+			<s:List
+				id="listSgReadings"
+				width="100%"
+				height="100%"
+				dataProvider="{this._model.brew.sgReadings}">
+				<s:itemRenderer>
+					<fx:Component>
+						<s:ItemRenderer>
+							<s:layout>
+								<s:HorizontalLayout
+									paddingTop="5"
+									paddingBottom="3"
+									paddingLeft="3"
+									paddingRight="3" />
+							</s:layout>
+							<s:Label width="40" text="{Number( this.data.sgValue ).toFixed( 4 )}" />
+							<s:Label text="{HelperDate.formatDateTime( this.data.readingDate )}" />
+							<fx:Script>
+								<![CDATA[
+								import com.ivt.flex.utils.HelperDate;
+								]]>
+							</fx:Script>
+						</s:ItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+				</s:List>
+
+			<s:Button
+				label="Add"
+				click="this.dispatchEvent( new Event( ADD_SG_READING ))"/>
+			<s:Button
+				label="Remove"
+				click="this.dispatchEvent( new Event( DELETE_SG_READING ))"/>
+		</s:NavigatorContent>
+
+		<s:NavigatorContent
+			label="Bottling"
+			width="100%"
+			enabled="{this._model.brew.status.isBottled}">
+
+			<s:layout>
+				<s:VerticalLayout />
+			</s:layout>
+
+			<s:DataGroup
+				dataProvider="{this._model.brew.bottles}"
+				height="100%">
+
+				<s:layout>
+					<s:VerticalLayout />
+				</s:layout>
+
+				<s:itemRenderer>
+					<fx:Component>
+						<s:ItemRenderer
+							width="100%"
+							autoDrawBackground="false">
+							<s:layout>
+								<s:HorizontalLayout />
+							</s:layout>
+							<s:Label
+								text="{Bottle( this.data ).remaining}"
+								fontSize="20" />
+							<s:Label
+								text="out of "
+								fontSize="18"/>
+							<s:Label
+								text="{Bottle( this.data ).count}"
+								fontSize="20" />
+							<s:Label
+								text="{Bottle( this.data ).bottleType.bottleTypeLabel}'s remaining ({Number( Bottle( this.data ).bottleType.capacity * Bottle( this.data ).count / 1000 ).toFixed( 2 )} litres)"
+								fontSize="15" />
+
+							<fx:Script>
+								<![CDATA[
+									import com.serwylo.brewdiary.data.Bottle;
+								]]>
+							</fx:Script>
+						</s:ItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+
+			</s:DataGroup>
+
+			<s:Button
+				label="Edit bottle counts"
+				click="this.dispatchEvent( new Event( BrewView.EDIT_BOTTLES ) )" />
+
+		</s:NavigatorContent>
+
+	</mx:ViewStack>
+
+</core:View>

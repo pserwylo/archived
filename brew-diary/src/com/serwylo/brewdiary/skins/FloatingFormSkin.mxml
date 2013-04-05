@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<s:SparkSkin
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx">
+
+	<s:states>
+		<s:State name="normal" />
+	</s:states>
+	
+	<s:Rect
+		width="100%"
+		height="100%"
+		topLeftRadiusX="10"
+		topLeftRadiusY="10"
+		bottomLeftRadiusX="10"
+		bottomLeftRadiusY="10">
+		<s:fill>
+			<s:SolidColor color="black" />
+		</s:fill>
+	</s:Rect>
+
+	<s:Rect
+		left="5"
+		right="0"
+		top="5"
+		bottom="5"
+		topLeftRadiusX="10"
+		topLeftRadiusY="10"
+		bottomLeftRadiusX="10"
+		bottomLeftRadiusY="10">
+		<s:fill>
+			<s:SolidColor color="white" />
+		</s:fill>
+	</s:Rect>
+
+	<s:Group
+		id="contentGroup"
+		left="20"
+		right="20"
+		top="20"
+		bottom="20"/>
+
+</s:SparkSkin>

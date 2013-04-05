@@ -1,0 +1,132 @@
+
+#include <aophp.h>
+
+void aophp::aophp_zend_execute( zend_op_array* op_array TSRMLS_DC )
+{
+	// Make sure to check if any of the specified function hooks (if any)
+	// ask for the execution of the original function to be prevented...
+	bool run_original_function = true;
+
+	// Look at the attributes for the called function...
+	std::vector<aophp::Attribute>* attributes = aophp::get_attributes( op_array ); 
+	// If any of the attributes have been added as a function hook,
+	// then we want to call the appropriate function...
+	for ( std::map<std::string, aophp::FunctionHook>::iterator hookIt = aophp::function_hooks.begin();hookIt != aophp::function_hooks.end(); hookIt ++ )
+	{
+		for ( std::vector<aophp::Attribute>::iterator attributeIt = attributes->begin(); attributeIt != attributes->end(); attributeIt++ )
+		{
+			aophp::Attribute attribute = *attributeIt;
+			std::pair<std::string, aophp::FunctionHook> pair = *hookIt;
+			aophp::FunctionHook hook = pair.second;
+			if ( hook.attribute_name == attribute.attribute_name )
+			{
+				// We want to get the attribute values and present them nicely to the hook function
+				// so they don't have to go looking for them...
+				zval* attributes_arg;
+				MAKE_STD_ZVAL( attributes_arg );
+
+				// Iterate through again, so that we can get a collection of all the attributes with the current name (if more than one)...	
+				std::vector<std::string> values;
+				for ( std::vector<aophp::Attribute>::iterator attributeIt2 = attributes->begin(); attributeIt2 != attributes->end(); attributeIt2 ++ )
+				{
+					aophp::Attribute dupAtt = *attributeIt2;
+					if ( dupAtt.attribute_name == attribute.attribute_name )
+					{
+						values.push_back( dupAtt.value );
+					}
+				}
+
+				// Build a zend_array of attributes to be passed to the hook function...
+				if ( hook.accept_multiple_attributes )
+				{
+					array_init( attributes_arg );
+					for ( std::vector<std::string>::iterator valueIt = values.begin(); valueIt != values.end(); valueIt++ )
+					{
+						add_next_index_string( attributes_arg, valueIt->c_str(), valueIt->size() );
+					}
+				}
+				else
+				{
+					// If there is more than one tag with the specified name, but we were only expecting one...
+					if ( values.size() > 1 )
+					{
+						// Really doesn't hurt anything, the hook will go ahead as planned...
+						zend_error( E_NOTICE, "Found %d attributes with the name '%s', discarding all but the first", values.size(), attribute.attribute_name.c_str() );
+					}
+
+					ZVAL_STRING( attributes_arg, attribute.value.c_str(), attribute.value.size() );
+				}
+
+				zval* function_hook_val;
+				MAKE_STD_ZVAL( function_hook_val );
+				ZVAL_STRING( function_hook_val, hook.function_hook_name.c_str(), hook.function_hook_name.size() );
+
+				zval** args[2];
+				MAKE_STD_ZVAL( *(args[0]) );
+				ZVAL_STRING( *(args[0]), op_array->function_name, strlen( op_array->function_name ) );
+				args[1] = &attributes_arg;
+
+				zval* return_value;
+				if ( call_user_function_ex( EG( function_table ), NULL, function_hook_val, &return_value, 2, args, 0, NULL TSRMLS_CC ) != SUCCESS )
+				{
+					// Not the end of the world, but the hook will not work...
+					zend_error( E_WARNING, "Cannot hook to function %s", hook.function_hook_name.c_str() );
+				}
+				else
+				{
+					// Find out whether we got a true or false out of the user defined function...
+					convert_to_boolean( return_value );
+					zend_bool return_success = Z_BVAL( *return_value );
+
+					// ...see if we want to continue with the existing function...
+					run_original_function &= ( ! hook.allow_prevent || return_success );
+				}
+
+				// Break, so that we can continue on looking for other function hooks...
+				// otherwise, we could end up hooking into the function once for each duplicate attribute,
+				// which is crap.
+				break;
+			} 
+		}
+	}
+
+	
+	// ... and then do whatever is required...
+	if ( run_original_function )
+	{
+		old_zend_execute( op_array TSRMLS_CC );
+	}
+	else
+	{
+		// throw exception?
+	}
+}
+
+std::vector<aophp::Attribute>* aophp::get_attributes( zend_op_array* op_array )
+{
+	// First check if the requested attributes exist in the cache...
+	std::map<std::string, std::vector<aophp::Attribute>*>::iterator found = aophp::cached_function_attributes.find( op_array->function_name );
+	if ( found != aophp::cached_function_attributes.end() )
+	{
+		return found->second;
+	}
+	else
+	{
+		// Extract the attributes from the doc comments, stuff them in the cache, and then return them...
+
+		// Clean all the comment fluff ( "/**", "*", "*/" )...
+
+		// Break into attributes...
+		
+		// Stick into vector...
+		std::vector<aophp::Attribute>* attributes = new std::vector<aophp::Attribute>();
+
+		// Cache vector...
+		aophp::cached_function_attributes.insert( std::make_pair( std::string( op_array->function_name ), attributes ) );		
+	
+		// return...
+		return attributes;
+	}
+  
+}
+

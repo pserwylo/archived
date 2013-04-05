@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<core:View
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:core="com.serwylo.brewdiary.core.*"
+	xmlns:ivtcontainers="com.ivt.flex.containers.*" xmlns:ivtcontrols="com.ivt.flex.controls.*">
+
+	<core:layout>
+		<s:VerticalLayout
+			paddingTop="10"
+			paddingBottom="10"/>
+	</core:layout>
+
+	<fx:Script>
+		<![CDATA[
+		import com.serwylo.brewdiary.events.DataChangeEvent;
+
+		public static const NEW_BATCH:String = "New Batch";
+
+		[Bindable]
+		private var _model:OverviewModel;
+
+		public function setup( model:OverviewModel ):void
+		{
+			this._model = model;
+		}
+		]]>
+	</fx:Script>
+
+	<s:HGroup
+		id="groupHeader"
+		width="100%">
+		<s:Label
+			fontSize="50"
+			text="Brewers Diary..."/>
+	</s:HGroup>
+
+	<s:HGroup
+		id="groupToolbar"
+		paddingLeft="10"
+		paddingRight="10"
+		width="100%">
+		<s:Button
+			id="btnNew"
+			label="New Batch"
+			click="this.dispatchEvent( new Event( NEW_BATCH ) )"/>
+		<mx:Spacer width="100%"/>
+		<s:DropDownList
+			id="inputSort" />
+		<s:DropDownList
+			id="inputFilterType"
+			dataProvider="{this._model.statusList}"
+			labelField="statusLabel" />
+		<ivtcontrols:FilterInput
+			id="inputFilterText"
+			prompt="search brews..."
+			filterProperties="{['type']}"
+			dataProvider="{this._model.brewList}"/>
+	</s:HGroup>
+
+	<s:Group
+		width="100%"
+		height="100%">
+
+		<s:List
+			id="inputBatchList"
+			left="10"
+			width="100%"
+			height="100%"
+			dataProvider="{this._model.brewList}"
+			change="{this.dispatchEvent( new DataChangeEvent( 'selectedBatch', this.inputBatchList.selectedItem ))}">
+
+			<s:itemRenderer>
+				<fx:Component>
+					<s:ItemRenderer
+						width="100%">
+
+						<s:layout>
+							<s:HorizontalLayout
+								paddingLeft="10"
+								paddingRight="10"
+								paddingTop="5"
+								paddingBottom="5"
+								verticalAlign="middle"/>
+						</s:layout>
+
+						<fx:Script>
+							<![CDATA[
+							import com.ivt.flex.utils.HelperDate;
+							]]>
+						</fx:Script>
+
+						<s:Label fontSize="18" text="{data.brewLabel}"/>
+						<s:Label text="{HelperDate.formatDate( data.startDate )}"/>
+					</s:ItemRenderer>
+				</fx:Component>
+			</s:itemRenderer>
+
+		</s:List>
+
+		<ivtcontainers:ContentGroup
+			width="50%"
+			height="100%"
+			right="0"
+			hideOnEmpty="true"
+			content="{this._model.batchController.view}"/>
+
+	</s:Group>
+
+</core:View>

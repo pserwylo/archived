@@ -1,0 +1,16 @@
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+.formHeading
+{
+    fontSize: 24pt;
+}
+.formSubHeading
+{
+    fontSize: 14pt;
+    fontStyle: italic;
+}
+
+.formItemLabel
+{
+    fontWeight: bold;
+}

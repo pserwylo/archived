@@ -140,11 +140,13 @@ BuildingBlock::BuildingBlock( osg::Box* box, bool isWindow ) :
 	this->setVertexArray( vertices );
 	this->setNormalArray( normals );
 	this->addPrimitiveSet( faceIndices );
-	this->setNormalBinding( osg::Geometry::BIND_PER_PRIMITIVE );
-	this->setNormalIndices( normalIndexArray );
+	this->setNormalBinding( osg::Geometry::AttributeBinding(3) );
+	// this->setNormalIndices( normalIndexArray );
 	this->setColorArray( colourArray );
 	this->setColorBinding( osg::Geometry::BIND_OVERALL );
-	this->setColorIndices( colourIndices );
+	// this->setColorIndices( colourIndices );
+
+    this->fixDeprecatedData();
 
 	/*
 	if ( BuildingBlock::wallImage == NULL )

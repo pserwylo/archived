@@ -9,8 +9,8 @@
 
 #include <osg/Group>
 #include <string>
-#include <FernLeaf.h>
-#include <FernSegment.h>
+#include "FernLeaf.h"
+#include "FernSegment.h"
 
 namespace plants
 {

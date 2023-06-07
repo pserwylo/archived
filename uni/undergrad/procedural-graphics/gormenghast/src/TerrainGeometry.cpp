@@ -369,8 +369,7 @@ void TerrainGeometry::drawImplementation(osg::RenderInfo &renderInfo) const
     }
 }
 
-osg::BoundingBox TerrainGeometry::computeBound() const
-{
+osg::BoundingBox TerrainGeometry::computefBounds() const {
 	osg::BoundingBox box;
 	box.set(0, 0,
 		-this->maxHeight * this->scaleFactor,

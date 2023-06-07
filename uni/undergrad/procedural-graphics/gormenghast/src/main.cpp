@@ -4,6 +4,8 @@
  * requirements for the degree of BITS (Honours), Monash University
  */
 
+#define OSG_USE_DEPRECATED_GEOMETRY_METHODS
+
 #include "TerrainGenerator.h"
 #include "TerrainGeometry.h"
 #include "TerrainSaver.h"
@@ -13,9 +15,9 @@
 #include <osg/Group>
 #include <osg/ShapeDrawable>
 
-#include <ParticleSystem.h>
-#include <TuftNode.h>
-#include <TowerGenerator.h>
+#include "ParticleSystem.h"
+#include "TuftNode.h"
+#include "TowerGenerator.h"
 
 #include <iostream>
 #include <vector>
@@ -101,6 +103,7 @@ int main()
 	std::cout << "Finished generation.\nRunning visualisation...";
 	std::cout.flush();
 	osgViewer::Viewer viewer;
+    viewer.getCamera()->setCullingMode(osg::CullSettings::CullingModeValues::NO_CULLING);
 	viewer.setSceneData( root );
     viewer.setUpViewInWindow( 0, 0, 800, 600, 0 );
 	viewer.run();

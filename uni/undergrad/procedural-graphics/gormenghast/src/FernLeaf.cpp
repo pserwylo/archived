@@ -111,10 +111,10 @@ FernLeafHigh::FernLeafHigh( float length, float width )
 
 	this->addPrimitiveSet( face );
 
-	this->setColorBinding( osg::Geometry::BIND_PER_PRIMITIVE );
+	this->setColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
 	this->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
 
-	this->setNormalIndices( normalIndexArray );
+	this->setNormalArray( normalIndexArray );
 }
 
 FernLeafMedium::FernLeafMedium( float length, float width )
@@ -166,8 +166,8 @@ FernLeafMedium::FernLeafMedium( float length, float width )
 
 	this->addPrimitiveSet( face );
 
-	this->setColorBinding( osg::Geometry::BIND_PER_PRIMITIVE );
-	this->setNormalBinding( osg::Geometry::BIND_PER_PRIMITIVE );
+	this->setColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
+	this->setNormalBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
 
 }
 
@@ -202,7 +202,7 @@ FernLeafLow::FernLeafLow( float length, float width )
 
 	this->addPrimitiveSet( face );
 
-	this->setColorBinding( osg::Geometry::BIND_PER_PRIMITIVE );
-	this->setNormalBinding( osg::Geometry::BIND_PER_PRIMITIVE );
+	this->setColorBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
+	this->setNormalBinding( osg::Geometry::BIND_PER_PRIMITIVE_SET );
 
 }

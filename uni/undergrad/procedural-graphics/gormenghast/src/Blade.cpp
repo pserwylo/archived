@@ -102,7 +102,7 @@ void Blade::drawImplementation(osg::RenderInfo &renderInfo) const
 	}
 }
 
-osg::BoundingBox Blade::computeBound() const
+osg::BoundingSphere Blade::computeBound() const
 {
 	return this->bounds;
 }

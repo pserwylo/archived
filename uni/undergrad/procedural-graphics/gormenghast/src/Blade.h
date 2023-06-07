@@ -34,7 +34,7 @@ public:
 	// Switches based on <code>detail</code> and passes the rendering on
 	// to the draw*Quality function.
 	virtual void drawImplementation(osg::RenderInfo &info) const;
-	virtual osg::BoundingBox computeBound() const;
+	virtual osg::BoundingSphere computeBound() const;
 
 private:
 	void drawLowQuality() const;

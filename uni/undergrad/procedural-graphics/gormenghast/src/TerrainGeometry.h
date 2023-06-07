@@ -24,7 +24,7 @@ public:
 	double getHeightAt(osg::Vec2 xyLocation);
 
 	virtual void drawImplementation(osg::RenderInfo &info) const;
-	virtual osg::BoundingBox computeBound() const;
+	virtual osg::BoundingBox computefBounds() const;
 
 private:
 	int numOfPoints;

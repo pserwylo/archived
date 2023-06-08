@@ -2,7 +2,7 @@
 
 ## Screenshots
 
-<img src="./docs/gormenghast.1.png" height="300" /> <img src="./docs/gormenghast.2.png" height="300" /> <img src="./docs/gormenghast.3.png" height="300" />
+<img src="./docs/gormenghast.1.png" width="300" /> <img src="./docs/gormenghast.2.png" width="300" /> <img src="./docs/gormenghast.3.png" width="300" />
 
 ## Compiling
 
